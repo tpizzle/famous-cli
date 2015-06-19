@@ -5,10 +5,11 @@ var program = require('commander');
 var register = require('../lib/user/create');
 var login = require('../lib/user/login');
 var create = require('../lib/project/create');
+var init = require('../lib/project/init');
 var fork = require('../lib/project/fork');
 var develop = require('../lib/dev/dev');
 var userGet = require('../lib/user/get');
-var deploy = require('../lib/deploy');
+var deploy = require('../lib/deploy').deployCLI;
 var metrics = require('../lib/metrics/mixpanel');
 var storage = require('../res/sdk-bundle').storage;
 var set = require('../lib/config/set');
@@ -24,7 +25,8 @@ storage.getGlobal(function(error, config){
 auto(function(){
     program
         .version(require('../package.json').version)
-        .option('-v, --version', 'output the version number');
+        .option('-v, --version', 'output the version number')
+        .option('--loglevel <level>', 'output the version number');
 
     program
         .command('register')
@@ -38,10 +40,15 @@ auto(function(){
 
     program
         .command('create')
-        .alias('init')
         .description('create a famous project')
         .option('-n, --name', 'Name your project')
         .action(create);
+
+    program
+        .command('init')
+        .description('init a famous seed repo')
+        .option('-n, --name', 'Name your seed repo')
+        .action(init);
 
     program
         .command('fork')
@@ -56,7 +63,7 @@ auto(function(){
         .action(develop);
 
     program
-        .command('deploy')
+        .command('deploy [directory]')
         .description('deploy a famous project')
         .action(deploy);
 
@@ -80,6 +87,17 @@ auto(function(){
 
     program
         .parse(process.argv);
+
+    if (program.loglevel) {
+        var loglevel = program.loglevel;
+        if (loglevel === 1 || loglevel === 'verbose') {
+            process.env.FAMOUS_CLI_LOG_LEVEL = 1;
+        } else if (loglevel === 2 || loglevel === 'debug') {
+            process.env.FAMOUS_CLI_LOG_LEVEL = 2;
+        } else {
+            process.env.FAMOUS_CLI_LOG_LEVEL = 0;
+        }
+    }
 
     if (program.args.length === 0) {
         program.help();

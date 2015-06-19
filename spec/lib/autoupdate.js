@@ -58,24 +58,21 @@ test(function(t) {
         var storageMock = {
             getGlobal: sinon.stub().callsArgWith(0, null, null)
         }
-        var metricsMock = {
-            setTracking: sinon.stub().callsArgWith(1, null)
-        }
+        var tosCheckMock = sinon.stub().callsArgWith(0, null);
+        
         var inquirerMock = {
             prompt: sinon.stub().callsArgWith(1, {tracking:false})
         }
 
-        t.plan(4);
+        t.plan(3);
 
         autoupdate.__set__('storage', storageMock);
-        autoupdate.__set__('inquirer', inquirerMock);
-        autoupdate.__set__('metrics', metricsMock);
+        autoupdate.__set__('tosCheck', tosCheckMock);
  
         checkTracking = autoupdate.__get__('checkTracking');
         checkTracking(function (error) {
             t.ok(true, "callback provided to autoupdate should be executed");
             t.ok(storageMock.getGlobal.called, "storage.getGlobal should be called as part of checkTracking");
-            t.ok(inquirerMock.prompt.called, "inquirer.prompt should be called as part of checkTracking if getGlobal returns non-valid data");
             t.equal(error, null, "return value should be null in success case");
         }); 
     });
@@ -86,24 +83,21 @@ test(function(t) {
         var storageMock = {
             getGlobal: sinon.stub().callsArgWith(0, null, {})
         }
-        var metricsMock = {
-            setTracking: sinon.stub().callsArgWith(1, null)
-        }
+        var tosCheckMock = sinon.stub().callsArgWith(0, null);
+        
         var inquirerMock = {
             prompt: sinon.stub().callsArgWith(1, {tracking:false})
         }
 
-        t.plan(4);
+        t.plan(3);
 
         autoupdate.__set__('storage', storageMock);
-        autoupdate.__set__('inquirer', inquirerMock);
-        autoupdate.__set__('metrics', metricsMock);
+        autoupdate.__set__('tosCheck', tosCheckMock);
  
         checkTracking = autoupdate.__get__('checkTracking');
         checkTracking(function (error) {
             t.ok(true, "callback provided to autoupdate should be executed");
             t.ok(storageMock.getGlobal.called, "storage.getGlobal should be called as part of checkTracking");
-            t.ok(inquirerMock.prompt.called, "inquirer.prompt should be called as part of checkTracking if getGlobal returns non-valid data");
             t.equal(error, null, "return value should be null in success case");
         }); 
     });
